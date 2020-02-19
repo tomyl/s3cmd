@@ -1599,7 +1599,10 @@ class S3(object):
         timestamp_start = time.time()
         upload = MultiPartUpload(self, stream, uri, headers)
         upload.upload_all_parts(extra_label)
-        response = upload.complete_multipart_upload()
+        if os.getenv('S3CMD_ABORT_MULTIPART_UPLOAD') == '1':
+            response = upload.abort_upload()
+        else:
+            response = upload.complete_multipart_upload()
         timestamp_end = time.time()
         response["elapsed"] = timestamp_end - timestamp_start
         response["size"] = size

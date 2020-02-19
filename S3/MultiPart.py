@@ -204,10 +204,9 @@ class MultiPartUpload(object):
         http://docs.amazonwebservices.com/AmazonS3/latest/API/index.html?mpUploadAbort.html
         """
         debug("MultiPart: Aborting upload: %s" % self.upload_id)
-        #request = self.s3.create_request("OBJECT_DELETE", uri = self.uri,
-        #                                  uri_params = {'uploadId': self.upload_id})
-        #response = self.s3.send_request(request)
-        response = None
+        request = self.s3.create_request("OBJECT_DELETE", uri = self.uri,
+                                          uri_params = {'uploadId': self.upload_id})
+        response = self.s3.send_request(request)
         return response
 
 # vim:et:ts=4:sts=4:ai
