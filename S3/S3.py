@@ -247,7 +247,7 @@ class S3(object):
     }
 
     ## Maximum attempts of re-issuing failed requests
-    _max_retries = 5
+    _max_retries = int(os.getenv('S3CMD_MAX_RETRIES', '5'))
 
     def __init__(self, config):
         self.config = config
@@ -1584,7 +1584,7 @@ class S3(object):
         ## when using KMS encryption, MD5 etag value will not match
         md5_from_s3 = response["headers"].get("etag", "").strip('"\'')
         if ('-' not in md5_from_s3) and (md5_from_s3 != md5_hash.hexdigest()) and response["headers"].get("x-amz-server-side-encryption") != 'aws:kms':
-            warning("MD5 Sums don't match!")
+            warning("MD5 Sums don't match! Expected '%s', got '%s'" % (md5_hash.hexdigest(), md5_from_s3))
             if retries:
                 warning("Retrying upload of %s" % (filename))
                 return self.send_file(request, stream, labels, buffer, throttle,
